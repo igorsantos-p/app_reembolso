@@ -4,3 +4,11 @@
   --font-sans: "Aldrich", sans-serif;
   --shadow-indigo-glow: inset 0 0 4px #4338ca, 0 0 8px #4338ca70;
 }
+
+select {
+  appearance: none;
+  background-image: url("./assets/chevronDown.svg");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem top 50%;
+  background-size: 1.25rem auto;
+}
