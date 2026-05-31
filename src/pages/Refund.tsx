@@ -13,15 +13,18 @@ export function Refund() {
                 <p className="text-xs font-extralight mt-2 mb-4">Por favor, preencha os dados abaixo para solicitar o reembolso.</p>
             </header>
             <Input required legend="Nome da solicitação" />
-            <Select required legend="Categoria" value={category} onChange={(e) => setCategory(e.target.value)}>
-                {
-                    CATEGORIES_KEYS.map((key) => (
-                        <option className="bg-gray-950" key={key}>
-                            {CATEGORIES[key].name}
-                        </option>
-                    ))
-                }
-            </Select>
+            <div className="flex justify-between items-center gap-4">
+                <Select required legend="Categoria" value={category} onChange={(e) => setCategory(e.target.value)}>
+                    {
+                        CATEGORIES_KEYS.map((key) => (
+                            <option className="bg-gray-950" key={key}>
+                                {CATEGORIES[key].name}
+                            </option>
+                        ))
+                    }
+                </Select>
+                <Input legend="Valor" required />
+            </div>
         </form>
     )
 }
