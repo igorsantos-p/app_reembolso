@@ -4,12 +4,13 @@ import { useState } from "react";
 import searchSvg from "../assets/search.svg";
 import { RefundItem } from "../components/RefundItem";
 import { CATEGORIES } from "../utils/category";
+import { formatCurrency } from "../utils/formatCurrency";
 
 const REFUND_EXAMPLE = {
     id: "1",
     username: "Igor Pereira",
     category: "Transporte",
-    amount: "50",
+    amount: formatCurrency(50.76),
     categoryImg: CATEGORIES["transport"].icon
 }
 
