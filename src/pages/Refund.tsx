@@ -1,5 +1,6 @@
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
+import { Upload } from "../components/Upload";
 import { CATEGORIES, CATEGORIES_KEYS } from "../utils/category";
 import { useState } from "react";
 
@@ -25,6 +26,7 @@ export function Refund() {
                 </Select>
                 <Input legend="Valor" required />
             </div>
+            <Upload />
         </form>
     )
 }
