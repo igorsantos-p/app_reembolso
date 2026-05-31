@@ -1,4 +1,5 @@
 import { Button } from "../components/Button";
+import { ConfirmModal } from "../components/ConfirmModal";
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
 import { Upload } from "../components/Upload";
@@ -6,6 +7,7 @@ import { CATEGORIES, CATEGORIES_KEYS } from "../utils/category";
 import { use, useState } from "react";
 
 export function Refund() {
+    const [open, setOpen] = useState(true)
     const [name, setName] = useState("")
     const [category, setCategory] = useState("")
     const [amount, setAmount] = useState("")
@@ -14,6 +16,11 @@ export function Refund() {
 
     function onSubmit(e: React.SubmitEvent) {
         e.preventDefault()
+        setOpen(true)
+        setName("")
+        setCategory("")
+        setAmount("")
+        setFilename(null)
     }
 
     return (
@@ -35,8 +42,11 @@ export function Refund() {
                 </Select>
                 <Input legend="Valor" required value={amount} onChange={(e) => setAmount(e.target.value)} />
             </div>
-            <Upload onChange={(e) => e.target.files && setFilename(e.target.files[0])} isLoading={isLoading} filename={filename && filename.name} />
+            <Upload onChange={(e) => e.target.files && setFilename(e.target.files[0])} isLoading={isLoading} filename={filename && filename.name} required />
             <Button type="submit" isLoading={isLoading}>Enviar</Button>
+            {open && (
+                <ConfirmModal isOpen={open} onClose={() => setOpen(false)} />
+            )}
         </form>
     )
 }
