@@ -1,3 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Aldrich", sans-serif;
+  --shadow-indigo-glow: inset 0 0 4px #4338ca, 0 0 8px #4338ca70;
+}
