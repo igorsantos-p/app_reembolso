@@ -15,7 +15,7 @@ type Props = {
 
 export function Pagination({ current, total, onNext, onPrevious, onFirst, onLast }: Props) {
     return (
-        <div className="flex justify-center items-center gap-4">
+        <div className="flex justify-center items-center gap-4 mt-6">
             <div className="flex gap-1">
                 <Button variant="icon" className="w-6 h-6" onClick={onFirst} disabled={current === 1}>
                     <img src={firstPageSvg} alt="" className="w-8" />

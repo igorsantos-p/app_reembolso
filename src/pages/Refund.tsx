@@ -1,21 +1,32 @@
+import { useNavigate, useParams } from "react-router";
 import { Button } from "../components/Button";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { Input } from "../components/Input";
 import { Select } from "../components/Select";
 import { Upload } from "../components/Upload";
 import { CATEGORIES, CATEGORIES_KEYS } from "../utils/category";
-import { use, useState } from "react";
+import { useState } from "react";
+import fileSvg from "../assets/file.svg"
+
 
 export function Refund() {
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(false)
     const [name, setName] = useState("")
     const [category, setCategory] = useState("")
     const [amount, setAmount] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const [filename, setFilename] = useState<File | null>(null)
 
+    const navigate = useNavigate()
+    const params = useParams<{ id: string }>()
+
     function onSubmit(e: React.SubmitEvent) {
         e.preventDefault()
+
+        if (params.id) {
+            return navigate(-1)
+        }
+
         setOpen(true)
         setName("")
         setCategory("")
@@ -29,9 +40,9 @@ export function Refund() {
                 <h1> Solicitação de Reembolso</h1>
                 <p className="text-xs font-extralight mt-2 mb-4">Por favor, preencha os dados abaixo para solicitar o reembolso.</p>
             </header>
-            <Input required legend="Nome da solicitação" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input required legend="Nome da solicitação" value={name} onChange={(e) => setName(e.target.value)} disabled={!!params.id} />
             <div className="flex justify-between items-center gap-4">
-                <Select required legend="Categoria" value={category} onChange={(e) => setCategory(e.target.value)}>
+                <Select required legend="Categoria" value={category} onChange={(e) => setCategory(e.target.value)} disabled={!!params.id}>
                     {
                         CATEGORIES_KEYS.map((key) => (
                             <option className="bg-gray-950" key={key}>
@@ -40,10 +51,19 @@ export function Refund() {
                         ))
                     }
                 </Select>
-                <Input legend="Valor" required value={amount} onChange={(e) => setAmount(e.target.value)} />
+                <Input legend="Valor" required value={amount} onChange={(e) => setAmount(e.target.value)} disabled={!!params.id} />
             </div>
-            <Upload onChange={(e) => e.target.files && setFilename(e.target.files[0])} isLoading={isLoading} filename={filename && filename.name} required />
-            <Button type="submit" isLoading={isLoading}>Enviar</Button>
+            {
+                params.id ?
+                    <a href="https://www.google.com/" target="blank" className="flex items-center text-sm justify-center gap-2 font-semibold my-6 hover:opacity-60 transition ease-linear">
+                        <img src={fileSvg} alt="Ícone de arquivo" className="w-8" /> Abrir Comprovante
+                    </a>
+                    : <Upload onChange={(e) => e.target.files && setFilename(e.target.files[0])} isLoading={isLoading} filename={filename && filename.name} required />
+            }
+            <Button type="submit" isLoading={isLoading}>
+                {params.id ? "Voltar" : "Enviar"}
+            </Button>
+
             {open && (
                 <ConfirmModal isOpen={open} onClose={() => setOpen(false)} />
             )}
