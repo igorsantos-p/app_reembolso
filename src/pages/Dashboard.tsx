@@ -1,6 +1,6 @@
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { useState } from "react";
+import { use, useState } from "react";
 import searchSvg from "../assets/search.svg";
 import { RefundItem } from "../components/RefundItem";
 import { CATEGORIES } from "../utils/category";
@@ -16,10 +16,31 @@ const REFUND_EXAMPLE = {
 }
 
 export function Dashboard() {
-    const [name, setName] = useState("");
+    const [name, setName] = useState("")
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(10)
 
     function handleSearch(e: React.SubmitEvent) {
         e.preventDefault()
+    }
+
+    function handlePagination(action: "next" | "previous" | "first" | "last") {
+        setPage((prevPage) => {
+            if (action === "next" && prevPage < totalPages) {
+                return prevPage + 1
+            }
+            if (action === "previous" && prevPage > 1) {
+                return prevPage - 1
+            }
+            if (action === "first" && totalPages > 1) {
+                return 1
+            }
+            if (action === "last" && totalPages > 1) {
+                return totalPages
+            }
+
+            return prevPage
+        })
     }
 
     return (
@@ -37,7 +58,7 @@ export function Dashboard() {
                 <RefundItem data={REFUND_EXAMPLE} />
                 <RefundItem data={REFUND_EXAMPLE} />
             </div>
-            <Pagination current={1} total={5} />
+            <Pagination current={page} total={totalPages} onFirst={() => handlePagination("first")} onNext={() => handlePagination("next")} onPrevious={() => handlePagination("previous")} onLast={() => handlePagination("last")} />
         </div>
     )
 }

@@ -14,8 +14,11 @@ const variants = {
 
 export function Button({ children, className, isLoading, type = "button", variant = "base", ...rest }: Props) {
     return (
-        <button type={type} {...rest} disabled={isLoading} className={
-            classMerge(["uppercase rounded-lg flex items-center justify-center bg-indigo-900 cursor-pointer hover:bg-indigo-700 transition ease-linear disabled:opacity-50 disabled:cursor-progress disabled:hover:bg-indigo-900", variants.button[variant], className])
-        }>{children}</button>
+        <button type={type} disabled={isLoading} className={
+            classMerge(["uppercase rounded-lg flex items-center justify-center bg-indigo-900 cursor-pointer hover:bg-indigo-700 transition ease-linear disabled:opacity-50 disabled:hover:bg-indigo-900", variants.button[variant], className, isLoading && "cursor-progress",
+            ])}
+            {...rest}>
+            {children}
+        </button>
     )
 }
