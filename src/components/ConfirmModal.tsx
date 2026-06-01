@@ -1,12 +1,12 @@
 import confirmSvg from '../assets/confirm.svg'
 import { Button } from './Button'
 
-interface ModalProps {
-    isOpen: boolean,
+type Props = {
+    isOpen: boolean
     onClose: () => void
 }
 
-export function ConfirmModal({ isOpen, onClose }: ModalProps) {
+export function ConfirmModal({ isOpen, onClose }: Props) {
     if (!isOpen) return null
 
     return (
