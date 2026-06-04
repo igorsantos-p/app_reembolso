@@ -1,6 +1,19 @@
 import { useState } from "react"
+import { useNavigate } from "react-router"
 import { Button } from "../components/Button"
 import { Input } from "../components/Input"
+import { z, ZodError } from "zod"
+import { api } from "../services/api"
+import { AxiosError } from "axios"
+
+const signUpSchema = z.object({
+    name: z.string().trim().min(3, { message: "Nome é obrigatório" }),
+    email: z.email({ message: "E-mail inválido" }),
+    password: z.string().min(6, { message: "A senha deve conter pelo menos 6 caracteres" }),
+    passwordConfirm: z.string({ message: "Confirme a senha" })
+}).refine((data) => data.password === data.passwordConfirm, {
+    message: "As senhas não são iguais", path: ["passwordConfirm"]
+})
 
 export function SignUp() {
     const [name, setName] = useState("")
@@ -9,8 +22,36 @@ export function SignUp() {
     const [passwordConfirm, setPasswordConfirm] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
-    function onSubmit(e: React.SubmitEvent) {
+    const navigate = useNavigate()
+
+    async function onSubmit(e: React.SubmitEvent) {
         e.preventDefault()
+
+        try {
+            setIsLoading(true)
+
+            const data = signUpSchema.parse({
+                name,
+                email,
+                password,
+                passwordConfirm
+            })
+
+            await api.post("/users", data)
+            navigate("/")
+
+        } catch (error) {
+            if (error instanceof ZodError) {
+                throw new Error
+            }
+
+            if (error instanceof AxiosError) {
+                throw new Error
+            }
+        } finally {
+            setIsLoading(false)
+        }
+
     }
 
     return (
