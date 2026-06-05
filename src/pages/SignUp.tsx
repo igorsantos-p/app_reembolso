@@ -9,8 +9,8 @@ import { AxiosError } from "axios"
 const signUpSchema = z.object({
     name: z.string().trim().min(3, { message: "Nome é obrigatório" }),
     email: z.email({ message: "E-mail inválido" }),
-    password: z.string().min(6, { message: "A senha deve conter pelo menos 6 caracteres" }),
-    passwordConfirm: z.string({ message: "Confirme a senha" })
+    password: z.string().trim().min(6, { message: "A senha deve conter pelo menos 6 caracteres" }),
+    passwordConfirm: z.string({ message: "Confirme a senha" }).trim()
 }).refine((data) => data.password === data.passwordConfirm, {
     message: "As senhas não são iguais", path: ["passwordConfirm"]
 })
