@@ -52,7 +52,7 @@ export function Refund() {
                 amount: amount.toString().replace(",", "."),
             })
 
-            const refund = await api.post("/refunds", { ...data, filename: response.data.filename })
+            await api.post("/refunds", { ...data, filename: response.data.filename })
 
             setOpen(true)
             formRef.current?.reset()
