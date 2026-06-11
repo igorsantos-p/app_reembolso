@@ -1,14 +1,14 @@
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { use, useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect } from "react";
 import searchSvg from "../assets/search.svg";
 import { RefundItem, type RefundItemProps } from "../components/RefundItem";
 import { CATEGORIES } from "../utils/category";
 import { formatCurrency } from "../utils/formatCurrency";
 import { Pagination } from "../components/Pagination"
-import { api } from "../services/api";
-import { AxiosError } from "axios";
+import { api, type CustomAxiosError } from "../services/api";
 import type { RefundsPaginationAPIResponse } from "../dtos/refund";
+import { useAlert } from "../contexts/AlertContext"
 
 const PER_PAGE = 10
 
@@ -17,6 +17,7 @@ export function Dashboard() {
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(10)
     const [refunds, setRefunds] = useState<RefundItemProps[]>([])
+    const { showAlert } = useAlert()
 
     async function handleSearch() {
         try {
@@ -33,9 +34,9 @@ export function Dashboard() {
             setTotalPages(response.data.pagination.totalPages)
 
         } catch (error) {
-            if (error instanceof AxiosError) {
-                return alert(error.response?.data.message)
-            }
+            console.log(error)
+            const err = error as CustomAxiosError
+            showAlert(err.messageFriendly || "Ocorreu um erro ao buscar as solicitações.")
         }
     }
 
@@ -81,7 +82,7 @@ export function Dashboard() {
             <div className="mt-6 flex flex-col gap-4 max-h-96 overflow-y-scroll">
                 {
                     refunds.map((item) => (
-                        <RefundItem key={item.id} data={item} href={`/refunds/${item.id}`} />
+                        <RefundItem key={item.id} data={item} href={`/refund/${item.id}`} />
                     ))
                 }
 

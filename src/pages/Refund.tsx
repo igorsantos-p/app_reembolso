@@ -5,41 +5,47 @@ import { Input } from "../components/Input";
 import { Select } from "../components/Select";
 import { Upload } from "../components/Upload";
 import { CATEGORIES, CATEGORIES_KEYS } from "../utils/category";
-import { useState, useActionState, useRef } from "react";
+import { useState, useEffect } from "react";
 import fileSvg from "../assets/file.svg"
 import { z, ZodError } from "zod"
-import { api } from "../services/api";
-import { AxiosError } from "axios";
+import { api, type CustomAxiosError } from "../services/api";
+import type { RefundAPIResponse } from "../dtos/refund";
+import { useAlert } from "../contexts/AlertContext";
 
 const refundSchema = z.object({
-    name: z.string().min(3, { message: "Informe o nome da solicitação" }),
+    name: z.string().min(3, { message: "Informe o nome da solicitação, deve conter pelo menos 3 caracteres" }),
     category: z.string().min(1, { message: "Selecione uma categoria" }),
-    amount: z.coerce.number({ message: "informe um valor válido" }).min(1),
+    amount: z.coerce.number({ message: "Informe um valor válido" }).min(1),
 })
 
 
 export function Refund() {
     const [open, setOpen] = useState(false)
-    const [state, formAction, isLoading] = useActionState(registration, null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [name, setName] = useState("")
+    const [category, setCategory] = useState("")
+    const [amount, setAmount] = useState("")
     const [file, setFile] = useState<File | null>(null)
-    const formRef = useRef<HTMLFormElement>(null)
+    const [error, setError] = useState("")
     const navigate = useNavigate()
     const params = useParams<{ id: string }>()
+    const { showAlert } = useAlert()
 
-    async function registration(_: any, formData: FormData) {
+    async function registration(e: React.SubmitEvent) {
+        e.preventDefault()
+
         if (params.id) {
             return navigate(-1)
         }
 
-        const name = formData.get("name")
-        const category = formData.get("category")
-        const amount = formData.get("amount")
+        if (!file) {
+            setError("Selecione um arquivo")
+            return
+        }
 
         try {
-
-            if (!file) {
-                return { message: "Selecione um arquivo" }
-            }
+            setIsLoading(true)
+            setError("")
 
             const fileUploadForm = new FormData()
             fileUploadForm.append("file", file)
@@ -52,33 +58,66 @@ export function Refund() {
                 amount: amount.toString().replace(",", "."),
             })
 
-            await api.post("/refunds", { ...data, filename: response.data.filename })
+
+            await api.post("/refund", { ...data, filename: response.data.filename })
 
             setOpen(true)
-            formRef.current?.reset()
-            setFile(null)
 
         } catch (error) {
             if (error instanceof ZodError) {
-                return { message: error.issues[0].message }
+                setError(error.issues[0].message)
+
+                return setIsLoading(false)
             }
 
-            if (error instanceof AxiosError) {
-                return { message: error.response?.data.message }
-            }
+            const err = error as CustomAxiosError
+
+            showAlert(err.messageFriendly || "Ocorreu um erro ao solicitar o reembolso")
+        } finally {
+            setIsLoading(false)
         }
 
     }
 
+    async function fetchRefund(id: string) {
+        try {
+            const response = await api.get<RefundAPIResponse>(`/refunds/${id}`)
+
+            setName(response.data.name)
+            setCategory(response.data.category)
+            setAmount(response.data.amount.toString())
+
+        } catch (error) {
+            const err = error as CustomAxiosError
+
+            showAlert(err.messageFriendly || "Não foi possível carregar esta solicitação")
+        }
+    }
+
+    useEffect(() => {
+        if (params.id) {
+            fetchRefund(params.id)
+        }
+    }, [params.id])
+
+    function resetForm() {
+        setIsLoading(false)
+        setName("")
+        setCategory("")
+        setAmount("")
+        setFile(null)
+        setError("")
+    }
+
     return (
-        <form action={formAction} className="w-full p-10 rounded-xl shadow-indigo-glow flex flex-col gap-6 lg:min-w-lg">
+        <form onSubmit={registration} className="w-full p-10 rounded-xl shadow-indigo-glow flex flex-col gap-6 lg:min-w-lg">
             <header className="text-xl font-semibold">
                 <h1> Solicitação de Reembolso</h1>
                 <p className="text-xs font-extralight mt-2 mb-4">Por favor, preencha os dados abaixo para solicitar o reembolso.</p>
             </header>
-            <Input required legend="Nome da solicitação" name="name" />
+            <Input required legend="Nome da solicitação" onChange={(e) => { setName(e.target.value) }} value={name} />
             <div className="flex justify-between items-center gap-4">
-                <Select required legend="Categoria" disabled={!!params.id} name="category">
+                <Select required legend="Categoria" disabled={!!params.id} onChange={(e) => { setCategory(e.target.value) }} value={category}>
                     {
                         CATEGORIES_KEYS.map((category) => (
                             <option className="bg-gray-950" key={category} value={category}>
@@ -87,7 +126,7 @@ export function Refund() {
                         ))
                     }
                 </Select>
-                <Input legend="Valor" required name="amount" />
+                <Input legend="Valor" required onChange={(e) => { setAmount(e.target.value) }} value={amount} />
             </div>
             {
                 params.id ?
@@ -96,13 +135,23 @@ export function Refund() {
                     </a>
                     : <Upload onChange={(e) => e.target.files && setFile(e.target.files[0])} isLoading={isLoading} filename={file && file.name} name="file" />
             }
-            <p>{state?.message}</p>
+            {
+                !params.id && (
+                    <div className="w-95 min-h-5 flex justify-center">
+                        {
+                            error && (
+                                <p className="text-sm text-red-500 text-center">{error}</p>
+                            )
+                        }
+                    </div>
+                )
+            }
             <Button type="submit" isLoading={isLoading}>
                 {params.id ? "Voltar" : "Enviar"}
             </Button>
 
             {open && (
-                <ConfirmModal isOpen={open} onClose={() => setOpen(false)} />
+                <ConfirmModal isOpen={open} onClose={() => { resetForm(); setOpen(false) }} />
             )}
         </form>
     )

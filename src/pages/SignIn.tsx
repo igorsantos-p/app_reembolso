@@ -1,10 +1,10 @@
-import { useActionState } from "react"
+import { useActionState, useEffect } from "react"
 import { Button } from "../components/Button"
 import { Input } from "../components/Input"
-import { api } from "../services/api"
-import { AxiosError } from "axios"
+import { api, type CustomAxiosError } from "../services/api"
 import { z, ZodError } from "zod"
 import { useAuth } from "../hooks/useAuth"
+import { useAlert } from "../contexts/AlertContext"
 
 const signInSchema = z.object({
     email: z.email({ message: "E-mail inválido" }),
@@ -14,6 +14,7 @@ const signInSchema = z.object({
 export function SignIn() {
     const [state, formAction, isLoading] = useActionState(signIn, null)
     const auth = useAuth()
+    const { showAlert } = useAlert()
 
     async function signIn(_: any, formData: FormData) {
         const email = formData.get("email")
@@ -33,20 +34,28 @@ export function SignIn() {
                 return { message: error.issues[0].message }
             }
 
-            if (error instanceof AxiosError) {
-                return { message: error.response?.data.message }
-            }
+            const err = error as CustomAxiosError
+            showAlert(err.messageFriendly || "Erro ao tentar realizar o login.")
         }
     }
+
+    useEffect(() => {
+        if (state?.errorType === "api" && state.errorMessage) {
+            showAlert(state.errorMessage)
+        }
+    }, [state?.errorMessage, state?.errorType, showAlert])
 
     return (
         <form action={formAction} className="w-full flex flex-col gap-4">
             <Input type="email" name="email" required legend="E-mail" placeholder="seu@email.com" />
             <Input type="password" name="password" required legend="Senha" placeholder="••••••" />
-            {
-                state?.message ? <p className="text-sm self-center text-red-500">{state?.message}</p> : <div className="h-5 w-full"></div>
-            }
-
+            <div className="w-95 min-h-5 flex justify-center">
+                {
+                    state && (
+                        <p className="text-sm text-red-500 text-center">{state.message}</p>
+                    )
+                }
+            </div>
             <Button type="submit" isLoading={isLoading}>Entrar</Button>
 
             <a href="/signup" className="text-sm text-center mt-10 mb-4 hover:text-indigo-300 transition ease-linear">Criar conta</a>

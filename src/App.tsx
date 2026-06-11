@@ -1,13 +1,16 @@
 import { Routes } from "./routes";
 import { AuthProvider } from "./contexts/AuthContext";
+import { AlertProvider } from "./contexts/AlertContext";
 
 
 export function App() {
 
   return (
-    <AuthProvider>
-      <Routes />
-    </AuthProvider>
+    <AlertProvider>
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
+    </AlertProvider>
 
   )
 }
