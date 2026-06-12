@@ -5,8 +5,6 @@ import { ManagerRoutes } from "./ManagerRoutes";
 import { Loading } from "../components/Loading";
 import { useAuth } from "../hooks/useAuth";
 
-const isLoading = false
-
 export function Routes() {
     const { session, isLoading } = useAuth()
 
@@ -24,6 +22,7 @@ export function Routes() {
     if (isLoading) {
         return <Loading />
     }
+
     return (
         <BrowserRouter>
             <Route />

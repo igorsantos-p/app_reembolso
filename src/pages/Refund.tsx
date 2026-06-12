@@ -11,6 +11,7 @@ import { z, ZodError } from "zod"
 import { api, type CustomAxiosError } from "../services/api";
 import type { RefundAPIResponse } from "../dtos/refund";
 import { useAlert } from "../contexts/AlertContext";
+import { formatCurrency } from "../utils/formatCurrency";
 
 const refundSchema = z.object({
     name: z.string().min(3, { message: "Informe o nome da solicitação, deve conter pelo menos 3 caracteres" }),
@@ -27,9 +28,10 @@ export function Refund() {
     const [amount, setAmount] = useState("")
     const [file, setFile] = useState<File | null>(null)
     const [error, setError] = useState("")
+    const [fileURL, setFileURL] = useState<string | null>(null)
+    const { showAlert } = useAlert()
     const navigate = useNavigate()
     const params = useParams<{ id: string }>()
-    const { showAlert } = useAlert()
 
     async function registration(e: React.SubmitEvent) {
         e.preventDefault()
@@ -59,7 +61,7 @@ export function Refund() {
             })
 
 
-            await api.post("/refund", { ...data, filename: response.data.filename })
+            await api.post("/refunds", { ...data, filename: response.data.filename })
 
             setOpen(true)
 
@@ -81,11 +83,14 @@ export function Refund() {
 
     async function fetchRefund(id: string) {
         try {
-            const response = await api.get<RefundAPIResponse>(`/refunds/${id}`)
+            const { data } = await api.get<RefundAPIResponse>(`/refunds/${id}`)
 
-            setName(response.data.name)
-            setCategory(response.data.category)
-            setAmount(response.data.amount.toString())
+
+
+            setName(data.name)
+            setCategory(data.category)
+            setAmount(formatCurrency(data.amount))
+            setFileURL(data.filename)
 
         } catch (error) {
             const err = error as CustomAxiosError
@@ -115,7 +120,7 @@ export function Refund() {
                 <h1> Solicitação de Reembolso</h1>
                 <p className="text-xs font-extralight mt-2 mb-4">Por favor, preencha os dados abaixo para solicitar o reembolso.</p>
             </header>
-            <Input required legend="Nome da solicitação" onChange={(e) => { setName(e.target.value) }} value={name} />
+            <Input required legend="Nome da solicitação" onChange={(e) => { setName(e.target.value) }} value={name} disabled={!!params.id} />
             <div className="flex justify-between items-center gap-4">
                 <Select required legend="Categoria" disabled={!!params.id} onChange={(e) => { setCategory(e.target.value) }} value={category}>
                     {
@@ -126,11 +131,11 @@ export function Refund() {
                         ))
                     }
                 </Select>
-                <Input legend="Valor" required onChange={(e) => { setAmount(e.target.value) }} value={amount} />
+                <Input legend="Valor" required onChange={(e) => { setAmount(e.target.value) }} value={amount} disabled={!!params.id} />
             </div>
             {
-                params.id ?
-                    <a href="https://www.google.com/" target="blank" className="flex items-center text-sm justify-center gap-2 font-semibold my-6 hover:opacity-60 transition ease-linear">
+                (params.id && fileURL) ?
+                    <a href={`http://localhost:3333/uploads/${fileURL}`} target="blank" className="flex items-center text-sm justify-center gap-2 font-semibold my-6 hover:opacity-60 transition ease-linear">
                         <img src={fileSvg} alt="Ícone de arquivo" className="w-8" /> Abrir Comprovante
                     </a>
                     : <Upload onChange={(e) => e.target.files && setFile(e.target.files[0])} isLoading={isLoading} filename={file && file.name} name="file" />

@@ -61,10 +61,10 @@ export function SignUp() {
 
     return (
         <form onSubmit={onSubmit} className="w-full flex flex-col gap-4">
-            <Input required legend="Nome" placeholder="Seu Nome" onChange={(e) => setName(e.target.value)} />
-            <Input type="email" required legend="E-mail" placeholder="seu@email.com" onChange={(e) => setEmail(e.target.value)} />
-            <Input type="password" required legend="Senha" placeholder="••••••" onChange={(e) => setPassword(e.target.value)} />
-            <Input type="password" required legend="Confirmar Senha" placeholder="••••••" onChange={(e) => setPasswordConfirm(e.target.value)} />
+            <Input required legend="Nome" placeholder="Seu Nome" onChange={(e) => { setName(e.target.value); setError("") }} />
+            <Input type="email" required legend="E-mail" placeholder="seu@email.com" onChange={(e) => { setEmail(e.target.value); setError("") }} />
+            <Input type="password" required legend="Senha" placeholder="••••••" onChange={(e) => { setPassword(e.target.value); setError("") }} />
+            <Input type="password" required legend="Confirmar Senha" placeholder="••••••" onChange={(e) => { setPasswordConfirm(e.target.value); setError("") }} />
 
             <div className="w-95 min-h-5 flex self-center justify-center">
                 {
@@ -74,7 +74,13 @@ export function SignUp() {
                 }
             </div>
 
-            <Button type="submit" isLoading={isLoading}>Criar</Button>
+            <Button type="submit" isLoading={isLoading}>
+                {
+                    (
+                        isLoading ? <span className="loading loading-spinner loading-md opacity-100"></span> : "Criar"
+                    )
+                }
+            </Button>
 
             <a href="/" className="text-sm text-center mt-10 mb-4 hover:text-indigo-300 transition ease-linear">Já tenho uma conta</a>
         </form>
