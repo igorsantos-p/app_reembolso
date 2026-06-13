@@ -42,10 +42,10 @@ export function SignIn() {
     }
 
     useEffect(() => {
-        if (state?.errorType === "api" && state.errorMessage) {
-            showAlert(state.errorMessage)
+        if (state) {
+            showAlert(state.message)
         }
-    }, [state?.errorMessage, state?.errorType, showAlert])
+    }, [state, showAlert])
 
     return (
         <form action={formAction} className="w-full flex flex-col gap-4">

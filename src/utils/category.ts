@@ -17,7 +17,7 @@ export const CATEGORIES = {
         name: "Transporte",
         icon: transportSvg,
     },
-    service: {
+    services: {
         name: "Serviços",
         icon: serviceSvg,
     },

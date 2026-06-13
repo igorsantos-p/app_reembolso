@@ -28,7 +28,7 @@ export function Dashboard() {
                 username: refund.user.name,
                 description: refund.name,
                 amount: formatCurrency(refund.amount),
-                categoryImg: CATEGORIES[refund.category].icon
+                categoryImg: CATEGORIES[refund.category as keyof typeof CATEGORIES].icon
             })))
 
             setTotalPages(response.data.pagination.totalPages)
