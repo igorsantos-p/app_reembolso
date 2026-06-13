@@ -8,8 +8,10 @@ export interface CustomAxiosError extends AxiosError<ApiErrorResponse> {
     messageFriendly?: string;
 }
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3333";
+
 export const api = axios.create({
-    baseURL: "http://localhost:3333"
+    baseURL: BASE_URL
 })
 
 api.interceptors.response.use(

@@ -1,5 +1,6 @@
 import { createContext, type ReactNode, useEffect, useState } from "react";
 import { api } from "../services/api";
+import { useNavigate } from "react-router";
 
 type AuthContext = {
     isLoading: boolean
@@ -11,6 +12,7 @@ type AuthContext = {
 const LOCAL_STAROGE_KEY = "@refund"
 
 export const AuthContext = createContext({} as AuthContext)
+
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<null | UserAPIResponse>(null)
