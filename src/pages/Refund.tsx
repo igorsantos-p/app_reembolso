@@ -85,8 +85,6 @@ export function Refund() {
         try {
             const { data } = await api.get<RefundAPIResponse>(`/refunds/${id}`)
 
-
-
             setName(data.name)
             setCategory(data.category)
             setAmount(formatCurrency(data.amount))
@@ -114,6 +112,14 @@ export function Refund() {
         setError("")
     }
 
+    function handleCloseModal() {
+        if (!params.id) {
+            resetForm()
+            setOpen(false)
+        }
+        setOpen(false)
+    }
+
     return (
         <form onSubmit={registration} className="w-full p-10 rounded-xl shadow-indigo-glow flex flex-col gap-6 lg:min-w-lg">
             <header className="text-xl font-semibold">
@@ -135,9 +141,10 @@ export function Refund() {
             </div>
             {
                 (params.id && fileURL) ?
-                    <a href={`http://localhost:3333/uploads/${fileURL}`} target="blank" className="flex items-center text-sm justify-center gap-2 font-semibold my-6 hover:opacity-60 transition ease-linear">
+
+                    <p className="flex items-center text-sm justify-center gap-2 font-semibold my-6 hover:opacity-60 transition ease-linear cursor-pointer" onClick={() => setOpen(true)}>
                         <img src={fileSvg} alt="Ícone de arquivo" className="w-8" /> Abrir Comprovante
-                    </a>
+                    </p>
                     : <Upload onChange={(e) => e.target.files && setFile(e.target.files[0])} isLoading={isLoading} filename={file && file.name} name="file" />
             }
             {
@@ -155,9 +162,12 @@ export function Refund() {
                 {params.id ? "Voltar" : "Enviar"}
             </Button>
 
-            {open && (
-                <ConfirmModal isOpen={open} onClose={() => { resetForm(); setOpen(false) }} />
-            )}
+
+            {
+                open &&
+                <ConfirmModal isOpen={open} onClose={() => handleCloseModal()} variant={params.id ? "image" : "base"}
+                    imageSrc={fileURL ?? undefined} />
+            }
         </form>
     )
 }
