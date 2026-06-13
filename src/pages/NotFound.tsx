@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 import error404 from "../assets/astronaut.svg"
 
 export function NotFound() {
@@ -8,7 +9,7 @@ export function NotFound() {
 
                 <h1 className="text-6xl font-semibold text-shadow-lg text-shadow-indigo-500 md:text-9xl">404</h1>
                 <p className="uppercase">Page not found</p>
-                <a href="/" className="text-xs mt-10 mb-4 hover:text-indigo-300 transition ease-linear">Voltar para a Home</a>
+                <Link to="/" className="text-xs mt-10 mb-4 hover:text-indigo-300 transition ease-linear">Voltar para a Home</Link>
             </div>
         </div>
     )

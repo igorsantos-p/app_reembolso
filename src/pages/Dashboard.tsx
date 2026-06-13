@@ -82,7 +82,7 @@ export function Dashboard() {
             <div className="mt-6 flex flex-col gap-4 max-h-96 overflow-y-scroll">
                 {
                     refunds.map((item) => (
-                        <RefundItem key={item.id} data={item} href={`/refund/${item.id}`} />
+                        <RefundItem key={item.id} data={item} to={`/refund/${item.id}`} />
                     ))
                 }
 
