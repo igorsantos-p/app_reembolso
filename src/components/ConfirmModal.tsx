@@ -68,7 +68,7 @@ export function ConfirmModal({ isOpen, onClose, variant = "base", imageSrc }: Pr
                                 <img
                                     src={`http://localhost:3333/uploads/${imageSrc}`}
                                     alt="Visualização expandida"
-                                    className="max-w-100 h-auto object-cover rounded-lg shadow-2xl"
+                                    className="max-w-100 h-auto object-contain rounded-lg shadow-2xl"
                                 />
                             </>
                         )
