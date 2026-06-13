@@ -46,11 +46,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [])
 
     function remove() {
-        setSession(null)
+        delete api.defaults.headers.common["Authorization"]
         localStorage.removeItem(`${LOCAL_STAROGE_KEY}:user`)
         localStorage.removeItem(`${LOCAL_STAROGE_KEY}:token`)
 
-        window.location.assign("/")
+        setSession(null)
     }
 
     return (
