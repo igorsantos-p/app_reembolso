@@ -5,6 +5,7 @@ import { api, type CustomAxiosError } from "../services/api"
 import { z, ZodError } from "zod"
 import { useAuth } from "../hooks/useAuth"
 import { useAlert } from "../contexts/AlertContext"
+import { Link } from "react-router"
 
 const signInSchema = z.object({
     email: z.email({ message: "E-mail inválido" }),
@@ -66,7 +67,7 @@ export function SignIn() {
                 }
             </Button>
 
-            <a href="/signup" className="text-sm text-center mt-10 mb-4 hover:text-indigo-300 transition ease-linear">Criar conta</a>
+            <Link to="/signup" className="text-sm text-center mt-10 mb-4 hover:text-indigo-300 transition ease-linear">Criar conta</Link>
         </form>
     )
 }

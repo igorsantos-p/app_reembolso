@@ -5,6 +5,7 @@ import { Input } from "../components/Input"
 import { z, ZodError } from "zod"
 import { api, type CustomAxiosError } from "../services/api"
 import { useAlert } from "../contexts/AlertContext"
+import { Link } from "react-router"
 
 const signUpSchema = z.object({
     name: z.string().trim().min(3, { message: "Nome é obrigatório, deve conter pelo menos 3 caracteres" }),
@@ -82,7 +83,7 @@ export function SignUp() {
                 }
             </Button>
 
-            <a href="/" className="text-sm text-center mt-10 mb-4 hover:text-indigo-300 transition ease-linear">Já tenho uma conta</a>
+            <Link to="/" className="text-sm text-center mt-10 mb-4 hover:text-indigo-300 transition ease-linear">Já tenho uma conta</Link>
         </form>
     )
 }
