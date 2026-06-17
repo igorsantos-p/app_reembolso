@@ -9,8 +9,10 @@ import { Pagination } from "../components/Pagination"
 import { api, type CustomAxiosError } from "../services/api";
 import type { RefundsPaginationAPIResponse } from "../dtos/refund";
 import { useAlert } from "../contexts/AlertContext"
+import { useAuth } from "../hooks/useAuth"
 
-const PER_PAGE = 10
+
+const PER_PAGE = 1
 
 export function Dashboard() {
     const [name, setName] = useState("")
@@ -18,6 +20,8 @@ export function Dashboard() {
     const [totalPages, setTotalPages] = useState(10)
     const [refunds, setRefunds] = useState<RefundItemProps[]>([])
     const { showAlert } = useAlert()
+    const { session } = useAuth()
+
 
     async function handleSearch() {
         try {
@@ -74,10 +78,16 @@ export function Dashboard() {
 
             <form onSubmit={onSubmit} className="flex flex-1 items-center justify-between pb-6 md:flex-row gap-2 mt-6
             border-b border-indigo-900/60">
-                <Input placeholder="Buscar solicitações" onChange={(e) => setName(e.target.value)}></Input>
-                <Button variant="icon" type="submit">
-                    <img src={searchSvg} alt="Ícone de busca" className="w-6 h-auto" />
-                </Button>
+                {
+                    session.user.role === "manager" && (
+                        <>
+                            <Input placeholder="Buscar solicitações" onChange={(e) => setName(e.target.value)}></Input>
+                            <Button variant="icon" type="submit">
+                                <img src={searchSvg} alt="Ícone de busca" className="w-6 h-auto" />
+                            </Button>
+                        </>
+                    )
+                }
             </form>
             <div className="mt-6 flex flex-col gap-4 max-h-96 overflow-y-scroll">
                 {

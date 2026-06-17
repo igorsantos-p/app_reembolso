@@ -41,8 +41,7 @@ export function Refund() {
         }
 
         if (!file) {
-            setError("Selecione um arquivo")
-            return
+            return setError("Selecione um arquivo")
         }
 
         try {
