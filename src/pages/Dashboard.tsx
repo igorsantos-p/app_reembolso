@@ -12,7 +12,7 @@ import { useAlert } from "../contexts/AlertContext"
 import { useAuth } from "../hooks/useAuth"
 
 
-const PER_PAGE = 1
+const PER_PAGE = 10
 
 export function Dashboard() {
     const [name, setName] = useState("")
@@ -79,7 +79,7 @@ export function Dashboard() {
             <form onSubmit={onSubmit} className="flex flex-1 items-center justify-between pb-6 md:flex-row gap-2 mt-6
             border-b border-indigo-900/60">
                 {
-                    session.user.role === "manager" && (
+                    session?.user.role === "manager" && (
                         <>
                             <Input placeholder="Buscar solicitações" onChange={(e) => setName(e.target.value)}></Input>
                             <Button variant="icon" type="submit">
