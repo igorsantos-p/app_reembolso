@@ -10,6 +10,7 @@ import { api, type CustomAxiosError } from "../services/api";
 import type { RefundsPaginationAPIResponse } from "../dtos/refund";
 import { useAlert } from "../contexts/AlertContext"
 import { useAuth } from "../hooks/useAuth"
+import { Link } from "react-router";
 
 
 const PER_PAGE = 10
@@ -91,9 +92,19 @@ export function Dashboard() {
             </form>
             <div className="mt-6 flex flex-col gap-4 max-h-96 overflow-y-scroll">
                 {
-                    refunds.map((item) => (
-                        <RefundItem key={item.id} data={item} to={`/refund/${item.id}`} />
-                    ))
+                    refunds.length > 0 ?
+                        (
+                            refunds.map((item) => (
+                                <RefundItem key={item.id} data={item} to={`/refund/${item.id}`} />
+                            ))
+                        )
+                        :
+                        <div className="flex flex-col gap-4 items-center">
+                            <h2>Nenhuma solicitação encontrada</h2>
+                            <Link to="/">
+                                <Button>Cadastrar Solicitação</Button>
+                            </Link>
+                        </div>
                 }
 
             </div>
