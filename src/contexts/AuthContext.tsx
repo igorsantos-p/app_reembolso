@@ -1,6 +1,5 @@
 import { createContext, type ReactNode, useEffect, useState } from "react";
 import { api } from "../services/api";
-import { useNavigate } from "react-router";
 
 type AuthContext = {
     isLoading: boolean
@@ -17,7 +16,6 @@ export const AuthContext = createContext({} as AuthContext)
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [session, setSession] = useState<null | UserAPIResponse>(null)
     const [isLoading, setIsLoading] = useState(true)
-    const navigate = useNavigate()
 
     function save(data: UserAPIResponse) {
         localStorage.setItem(`${LOCAL_STAROGE_KEY}:user`, JSON.stringify(data.user))
@@ -54,7 +52,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem(`${LOCAL_STAROGE_KEY}:token`)
 
         setSession(null)
-        navigate("/", { replace: true })
     }
 
     return (
