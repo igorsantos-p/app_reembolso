@@ -4,13 +4,6 @@ type Props = React.ComponentProps<"div"> & {
     variant?: "base" | "icon"
 }
 
-const variants = {
-    loader: {
-        base: "",
-        icon: ""
-    }
-}
-
 export function Loading({ variant = "base", className }: Props) {
     return (
         variant === "base" ?
