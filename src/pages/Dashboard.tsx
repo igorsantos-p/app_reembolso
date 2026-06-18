@@ -11,6 +11,7 @@ import type { RefundsPaginationAPIResponse } from "../dtos/refund";
 import { useAlert } from "../contexts/AlertContext"
 import { useAuth } from "../hooks/useAuth"
 import { Link } from "react-router";
+import { Loading } from "../components/Loading";
 
 
 const PER_PAGE = 10
@@ -18,7 +19,7 @@ const PER_PAGE = 10
 export function Dashboard() {
     const [name, setName] = useState("")
     const [page, setPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
     const [refunds, setRefunds] = useState<RefundItemProps[]>([])
     const { showAlert } = useAlert()
     const { session } = useAuth()
@@ -79,7 +80,20 @@ export function Dashboard() {
 
     return (
         <div className="rounded-lg p-10 shadow-indigo-glow md:min-w-3xl">
-            <h1 className="font-bold text-xl flex-1">Solicitações</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="font-bold text-xl flex-1">Solicitações</h1>
+                {
+                    session?.user.role === "employee" && (
+
+                        <Link to="/" className="ml-auto">
+                            <Button type="submit">
+                                Nova Solicitação
+                            </Button>
+                        </Link>
+                    )
+
+                }
+            </div>
 
             <form onSubmit={onSubmit} className="flex flex-1 items-center justify-between pb-6 md:flex-row gap-2 mt-6
             border-b border-indigo-900/60">
@@ -90,36 +104,43 @@ export function Dashboard() {
                             <Button variant="icon" type="submit">
                                 <img src={searchSvg} alt="Ícone de busca" className="w-6 h-auto" />
                             </Button>
-                        </>
-                    )
+                        </>)
                 }
             </form>
             <div className="mt-6 flex flex-col gap-4 max-h-96 overflow-y-scroll">
                 {
-                    !isLoading && (
-                        refunds.length > 0 ?
-                            (
-                                refunds.map((item) => (
-                                    <RefundItem key={item.id} data={item} to={`/refund/${item.id}`} />
-                                ))
-                            )
-                            :
-                            <div className="flex flex-col gap-4 items-center">
-                                <h2>Nenhuma solicitação encontrada</h2>
-                                {
-                                    session?.user.role === "employee" && (
-                                        <Link to="">
-                                            <Button>Cadastrar Solicitação</Button>
-                                        </Link>
-                                    )
-                                }
-                            </div>
+                    isLoading ? (
+                        <Loading />
                     )
+                        :
+                        (
+                            refunds.length > 0 ?
+                                (
+                                    refunds.map((item) => (
+                                        <RefundItem key={item.id} data={item} to={`/refund/${item.id}`} />
+                                    ))
+                                )
+                                :
+                                <div className="flex flex-col gap-4 items-center">
+                                    <h2>Nenhuma solicitação encontrada</h2>
+                                    {
+                                        session?.user.role === "employee" && (
+                                            <Link to="">
+                                                <Button>Cadastrar Solicitação</Button>
+                                            </Link>
+                                        )
+                                    }
+                                </div>
+                        )
 
                 }
 
             </div>
-            <Pagination current={page} total={totalPages} onFirst={() => handlePagination("first")} onNext={() => handlePagination("next")} onPrevious={() => handlePagination("previous")} onLast={() => handlePagination("last")} />
+            {
+                totalPages > 1 && (
+                    <Pagination current={page} total={totalPages} onFirst={() => handlePagination("first")} onNext={() => handlePagination("next")} onPrevious={() => handlePagination("previous")} onLast={() => handlePagination("last")} />
+                )
+            }
         </div>
     )
 }

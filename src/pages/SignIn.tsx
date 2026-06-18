@@ -6,6 +6,7 @@ import { z, ZodError } from "zod"
 import { useAuth } from "../hooks/useAuth"
 import { useAlert } from "../contexts/AlertContext"
 import { Link } from "react-router"
+import { Loading } from "../components/Loading"
 
 const signInSchema = z.object({
     email: z.email({ message: "E-mail inválido" }),
@@ -63,7 +64,7 @@ export function SignIn() {
             <Button type="submit" isLoading={isLoading}>
                 {
                     (
-                        isLoading ? <span className="loading loading-spinner loading-md opacity-100"></span> : "Entrar"
+                        isLoading ? <Loading variant="icon" /> : "Entrar"
                     )
                 }
             </Button>

@@ -21,8 +21,9 @@ const refundSchema = z.object({
 
 
 export function Refund() {
+    const params = useParams<{ id: string }>()
     const [open, setOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(!!params.id)
     const [name, setName] = useState("")
     const [category, setCategory] = useState("")
     const [amount, setAmount] = useState("")
@@ -31,7 +32,6 @@ export function Refund() {
     const [fileURL, setFileURL] = useState<string | null>(null)
     const { showAlert } = useAlert()
     const navigate = useNavigate()
-    const params = useParams<{ id: string }>()
 
     async function registration(e: React.SubmitEvent) {
         e.preventDefault()
@@ -82,6 +82,7 @@ export function Refund() {
 
     async function fetchRefund(id: string) {
         try {
+            setIsLoading(true)
             const { data } = await api.get<RefundAPIResponse>(`/refunds/${id}`)
 
             setName(data.name)
@@ -93,6 +94,8 @@ export function Refund() {
             const err = error as CustomAxiosError
 
             showAlert(err.messageFriendly || "Não foi possível carregar esta solicitação")
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -139,12 +142,14 @@ export function Refund() {
                 <Input legend="Valor" required onChange={(e) => { setAmount(e.target.value) }} value={amount} disabled={!!params.id} />
             </div>
             {
-                (params.id && fileURL) ?
+                !isLoading && (
+                    (params.id && fileURL) ?
 
-                    <p className="flex items-center text-sm justify-center gap-2 font-semibold my-6 hover:opacity-60 transition ease-linear cursor-pointer" onClick={() => setOpen(true)}>
-                        <img src={fileSvg} alt="Ícone de arquivo" className="w-8" /> Abrir Comprovante
-                    </p>
-                    : <Upload onChange={(e) => e.target.files && setFile(e.target.files[0])} isLoading={isLoading} filename={file && file.name} name="file" />
+                        <p className="flex items-center text-sm justify-center gap-2 font-semibold my-6 hover:opacity-60 transition ease-linear cursor-pointer" onClick={() => setOpen(true)}>
+                            <img src={fileSvg} alt="Ícone de arquivo" className="w-8" /> Abrir Comprovante
+                        </p>
+                        : <Upload onChange={(e) => e.target.files && setFile(e.target.files[0])} isLoading={isLoading} filename={file && file.name} name="file" />
+                )
             }
             {
                 !params.id && (

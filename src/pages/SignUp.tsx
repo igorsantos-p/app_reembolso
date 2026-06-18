@@ -6,6 +6,7 @@ import { z, ZodError } from "zod"
 import { api, type CustomAxiosError } from "../services/api"
 import { useAlert } from "../contexts/AlertContext"
 import { Link } from "react-router"
+import { Loading } from "../components/Loading"
 
 const signUpSchema = z.object({
     name: z.string().trim().min(3, { message: "Nome é obrigatório, deve conter pelo menos 3 caracteres" }),
@@ -78,7 +79,7 @@ export function SignUp() {
             <Button type="submit" isLoading={isLoading}>
                 {
                     (
-                        isLoading ? <span className="loading loading-spinner loading-md opacity-100"></span> : "Criar"
+                        isLoading ? <Loading variant="icon" /> : "Criar"
                     )
                 }
             </Button>

@@ -19,7 +19,7 @@ export function Routes() {
     }
 
     if (isLoading) {
-        return <Loading />
+        return <Loading className="w-screen h-screen" />
     }
 
     return (
