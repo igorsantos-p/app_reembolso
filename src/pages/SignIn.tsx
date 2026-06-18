@@ -52,6 +52,7 @@ export function SignIn() {
         <form action={formAction} className="w-full flex flex-col gap-4">
             <Input type="email" name="email" required legend="E-mail" placeholder="seu@email.com" onChange={() => setError("")} />
             <Input type="password" name="password" required legend="Senha" placeholder="••••••" onChange={() => setError("")} />
+
             <div className="max-w-95 min-h-5 flex justify-center">
                 {
                     state && (
