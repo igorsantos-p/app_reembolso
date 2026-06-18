@@ -22,9 +22,11 @@ export function Dashboard() {
     const [refunds, setRefunds] = useState<RefundItemProps[]>([])
     const { showAlert } = useAlert()
     const { session } = useAuth()
+    const [isLoading, setIsLoading] = useState(true)
 
 
     async function handleSearch() {
+        setIsLoading(true)
         try {
             const response = await api.get<RefundsPaginationAPIResponse>(`/refunds?name=${name.trim()}&page=${page}&perPage=${PER_PAGE}`)
 
@@ -42,6 +44,8 @@ export function Dashboard() {
             console.log(error)
             const err = error as CustomAxiosError
             showAlert(err.messageFriendly || "Ocorreu um erro ao buscar as solicitações.")
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -92,19 +96,26 @@ export function Dashboard() {
             </form>
             <div className="mt-6 flex flex-col gap-4 max-h-96 overflow-y-scroll">
                 {
-                    refunds.length > 0 ?
-                        (
-                            refunds.map((item) => (
-                                <RefundItem key={item.id} data={item} to={`/refund/${item.id}`} />
-                            ))
-                        )
-                        :
-                        <div className="flex flex-col gap-4 items-center">
-                            <h2>Nenhuma solicitação encontrada</h2>
-                            <Link to="/">
-                                <Button>Cadastrar Solicitação</Button>
-                            </Link>
-                        </div>
+                    !isLoading && (
+                        refunds.length > 0 ?
+                            (
+                                refunds.map((item) => (
+                                    <RefundItem key={item.id} data={item} to={`/refund/${item.id}`} />
+                                ))
+                            )
+                            :
+                            <div className="flex flex-col gap-4 items-center">
+                                <h2>Nenhuma solicitação encontrada</h2>
+                                {
+                                    session?.user.role === "employee" && (
+                                        <Link to="">
+                                            <Button>Cadastrar Solicitação</Button>
+                                        </Link>
+                                    )
+                                }
+                            </div>
+                    )
+
                 }
 
             </div>

@@ -31,7 +31,7 @@ export function Header() {
                                         <Link to={"/refunds/solicitacoes"}>Minhas Solicitações</Link>
                                     </li>
                                     <li className="flex" onClick={remove}>
-                                        <Link to={"/"}>Sair</Link>
+                                        <Link to="">Sair</Link>
                                     </li>
                                 </ul>
                             </>
