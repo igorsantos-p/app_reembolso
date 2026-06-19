@@ -79,14 +79,13 @@ export function Dashboard() {
     }
 
     return (
-        <div className="rounded-lg p-10 shadow-indigo-glow md:min-w-3xl">
-            <div className="flex justify-between items-center">
+        <div className="rounded-lg p-8 shadow-indigo-glow">
+            <div className="flex justify-between items-center gap-2">
                 <h1 className="font-bold text-xl flex-1">Solicitações</h1>
                 {
-                    session?.user.role === "employee" && (
-
-                        <Link to="/" className="ml-auto">
-                            <Button type="submit">
+                    session?.user.role === "employee" && refunds.length > 0 && (
+                        <Link to="/" className="text-xs sm:text-base">
+                            <Button type="submit" >
                                 Nova Solicitação
                             </Button>
                         </Link>
@@ -95,7 +94,7 @@ export function Dashboard() {
                 }
             </div>
 
-            <form onSubmit={onSubmit} className="flex flex-1 items-center justify-between pb-6 md:flex-row gap-2 mt-6
+            <form onSubmit={onSubmit} className="flex flex-1 items-center justify-between pb-6 gap-2 mt-6
             border-b border-indigo-900/60">
                 {
                     session?.user.role === "manager" && (
@@ -125,7 +124,7 @@ export function Dashboard() {
                                     <h2>Nenhuma solicitação encontrada</h2>
                                     {
                                         session?.user.role === "employee" && (
-                                            <Link to="">
+                                            <Link to="/">
                                                 <Button>Cadastrar Solicitação</Button>
                                             </Link>
                                         )
