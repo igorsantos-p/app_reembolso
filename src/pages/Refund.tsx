@@ -12,6 +12,7 @@ import { api, type CustomAxiosError } from "../services/api";
 import type { RefundAPIResponse } from "../dtos/refund";
 import { useAlert } from "../contexts/AlertContext";
 import { formatCurrency } from "../utils/formatCurrency";
+import { useAuth } from "../hooks/useAuth";
 
 const refundSchema = z.object({
     name: z.string().min(3, { message: "Informe o nome da solicitação, deve conter pelo menos 3 caracteres" }),
@@ -31,6 +32,7 @@ export function Refund() {
     const [error, setError] = useState("")
     const [fileURL, setFileURL] = useState<string | null>(null)
     const { showAlert } = useAlert()
+    const { session } = useAuth()
     const navigate = useNavigate()
 
     async function registration(e: React.SubmitEvent) {
@@ -122,6 +124,17 @@ export function Refund() {
         setOpen(false)
     }
 
+    async function handleDelete(id: string | undefined) {
+        try {
+            await api.delete(`/refunds/${id}`)
+            navigate(-1)
+        } catch (error) {
+            const err = error as CustomAxiosError
+
+            showAlert(err.messageFriendly || "Não foi possível deletar a solicitação")
+        }
+    }
+
     return (
         <form onSubmit={registration} className="w-full p-10 rounded-xl shadow-indigo-glow flex flex-col gap-6">
             <header className="text-xl font-semibold">
@@ -162,6 +175,13 @@ export function Refund() {
                     </div>
                 )
             }
+
+            {
+                params.id && session?.user.role === "employee" && (
+                    <Button className="hover:bg-red-500" onClick={() => handleDelete(params.id)}>Deletar Solicitação</Button>
+                )
+            }
+
             <Button type="submit" isLoading={isLoading}>
                 {params.id ? "Voltar" : "Enviar"}
             </Button>
